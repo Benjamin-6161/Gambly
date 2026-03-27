@@ -1,0 +1,10 @@
+langchain
+langgraph
+langgraph-prebuilt
+langchain-openai
+python-dotenv
+langchain-community
+langchainhub
+requests
+sqlite3
+playwright
