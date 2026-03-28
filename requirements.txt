@@ -6,5 +6,4 @@ python-dotenv
 langchain-community
 langchainhub
 requests
-sqlite3
 playwright
