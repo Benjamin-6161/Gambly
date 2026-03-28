@@ -15,7 +15,7 @@ def send_telegram_message(message: str, from_ai=True) -> str:
   final_message = f"🚨Predictions for {formatted_date}\n\n{message}"
   
   if not from_ai:
-    final message = f"⚽Results for Yesterday's Matches"
+    final message = f"⚽Results for Yesterday's Matches\n\n{message}"
     
   payload = {
       "chat_id": CHAT_ID,
