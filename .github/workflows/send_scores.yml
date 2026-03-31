@@ -27,6 +27,12 @@ jobs:
       - name: Install system dependencies
         run: playwright install-deps
 
+      - name: Download database
+        uses: actions/download-artifact@v4
+        with:
+          name: matches-db
+          path: resources/db/
+
       - name: Send scores
         run: python3 results.py
         env:
