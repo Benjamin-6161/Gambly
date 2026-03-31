@@ -1,5 +1,5 @@
 import sqlite3
-
+import os
 
 def save_matches(matches):
   # Connect to database (creates file if it doesn't exist)
