@@ -28,3 +28,9 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           APIFY_KEY: ${{ secrets.APIFY_KEY }}
+
+      - name: Upload database
+        uses: actions/upload-artifact@v4
+        with:
+          name: matches-db
+          path: resources/db/matches.db
