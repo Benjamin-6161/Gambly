@@ -1,13 +1,18 @@
 import sqlite3
 import os
 
+def get_db_path():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, "../resources/db/matches.db")
+    db_path = os.path.abspath(db_path)
+
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    return db_path
+
 def save_matches(matches):
   # Connect to database (creates file if it doesn't exist)
-  base_dir = os.path.dirname(os.path.abspath(__file__))
-  db_path = os.path.join(base_dir,"../resources/db/matches.db")
-  db_path = os.path.abspath(db_path)
   
-  os.makedirs(os.path.dirname(db_path), exist_ok=True)
+  db_path = get_db_path
 
   conn = sqlite3.connect(db_path)
   conn.row_factory = sqlite3.Row
@@ -42,8 +47,8 @@ def save_matches(matches):
   conn.close()
     
 def get_matches():
-  # Connect to database (creates file if it doesn't exist)
-  conn = sqlite3.connect("../resources/db/my_database.db")
+  # Connect to database (creates file if it doesn't exist
+  conn = sqlite3.connect(get_db_path())
   conn.row_factory = sqlite3.Row
   cursor = conn.cursor()
   
