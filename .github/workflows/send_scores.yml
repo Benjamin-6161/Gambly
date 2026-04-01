@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "0 6 * * *"  
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
