@@ -33,7 +33,7 @@ jobs:
           workflow: daily_parlay.yml
           name: matches-db
           path: resources/db/
-          github_token: ${{ secrets.WORKFLOW_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send scores
         run: python3 results.py
