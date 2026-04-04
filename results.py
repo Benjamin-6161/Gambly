@@ -16,5 +16,6 @@ for match in matches:
     "scoreline":scoreline
   })
 
+print(results)
 message = generate_message(results)
 send_telegram_message(message, False)
