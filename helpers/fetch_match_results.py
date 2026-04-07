@@ -15,6 +15,7 @@ def get_match_score(url):
 
       # Extract full score (e.g. "1 - 0")
       score_text = page.query_selector("div.detailScore__wrapper").inner_text().strip()
+      score_text = score_text.replace("\n", " ")
 
       # Extract home and away separately
       home = page.query_selector(
