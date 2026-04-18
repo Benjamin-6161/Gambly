@@ -51,7 +51,9 @@ def fetch_matches(*args, **kwargs):
   apify_input = {
     "endpoint":"getMatches", 
     "sports":["football"],
-    "date":today
+    "daysOffset":[0,1,2],
+    "matchStatuses":["scheduled"],
+    "leagues":["Premier League", "Ligue 1", "Bundesliga", "Serie A", "LaLiga", "FA Cup", "Champions League - Play Offs", "Champions League - Quarter Finals", "Champions League - Semi Finals", "Champions League - Finals", "Europa League - Play Offs", "Europa League - Quarter Finals", "Europa League - Semi Finals", "Europa League - Finals"]
   }
   run = apify.start_actor_run(actor, apify_input)
   wait_for_completion(run["data"]["id"])
