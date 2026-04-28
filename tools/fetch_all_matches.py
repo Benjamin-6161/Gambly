@@ -51,7 +51,7 @@ def fetch_matches(*args, **kwargs):
   apify_input = {
     "endpoint":"getMatches", 
     "sports":["football"],
-    "daysOffsets":["0"],
+    "dayOffsets":["0"],
     "matchStatuses":["scheduled"],
     "leagues":["Premier League", "Ligue 1", "Bundesliga", "Serie A", "LaLiga", "FA Cup", "Champions League - Play Offs", "Champions League - Quarter Finals", "Champions League - Semi Finals", "Champions League - Finals", "Europa League - Play Offs", "Europa League - Quarter Finals", "Europa League - Semi Finals", "Europa League - Finals"]
   }
@@ -61,7 +61,7 @@ def fetch_matches(*args, **kwargs):
   dataset_id = run["data"]["defaultDatasetId"]
   dataset_info = apify.fetch_dataset_info(dataset_id)
   total_items =  dataset_info["data"]["itemCount"]
-  target = min(total_items, 5000)
+  target = min(total_items, 10000)
   m_offset = 0
   fetched = 0
 
