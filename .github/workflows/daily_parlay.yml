@@ -2,7 +2,7 @@ name: Daily Parlay
 
 on:
   schedule:
-    - cron: "0 7 * * *"  # runs daily at 7 AM UTC (8 AM WAT)
+    - cron: "0 4 * * *"  # runs daily at 4 AM UTC (5 AM WAT)
   workflow_dispatch:     
 
 jobs:
