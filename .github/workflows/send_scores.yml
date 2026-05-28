@@ -10,6 +10,7 @@ permissions:
   contents: read
 
 jobs:
+  if: false
   run-script:
     runs-on: ubuntu-latest
 
