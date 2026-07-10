@@ -1,2 +1,4 @@
 .env
 resources/db/matches.db
+__pycache__/
+*.pyc
