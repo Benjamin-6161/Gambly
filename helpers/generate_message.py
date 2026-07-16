@@ -2,9 +2,9 @@ def generate_message(items):
     """Simple fixture/scoreline formatter, kept for backwards compatibility."""
     message_lines = []
     for i in items:
-        line = f"*{i.get('match')}\n{i.get('scoreline')}"
+        line = f"*{i.get('match')}*\n{i.get('scoreline')}"
         message_lines.append(line)
-    return "\n".join(message_lines)
+    return "\n\n".join(message_lines)
 
 
 def generate_results_message(items):
@@ -22,22 +22,24 @@ def generate_results_message(items):
         d = item.get("details") or {}
         fixture = item.get("match", "Unknown fixture")
 
-        lines = [f"*{fixture}*"]
+        lines = [f"⚽ *{fixture}*"]
 
         ft = d.get("ft_score") or "unavailable"
         ht_suffix = f" (HT: {d.get('ht_score')})" if d.get("ht_score") else ""
         lines.append(f"FT: {ft}{ht_suffix}")
 
+        stat_bits = []
         if d.get("home_corners") is not None:
-            lines.append(f"Corners: {d['home_corners']}-{d['away_corners']}")
-
+            stat_bits.append(f"Corners: {d['home_corners']}-{d['away_corners']}")
         if d.get("home_cards") is not None:
-            lines.append(f"Cards: {d['home_cards']}-{d['away_cards']}")
+            stat_bits.append(f"Cards: {d['home_cards']}-{d['away_cards']}")
+        if stat_bits:
+            lines.append(" | ".join(stat_bits))
 
         if d.get("home_shots") is not None:
             shots_line = f"Shots: {d['home_shots']}-{d['away_shots']}"
             if d.get("home_sot") is not None:
-                shots_line += f" (on target: {d['home_sot']}-{d['away_sot']})"
+                shots_line += f" (on target {d['home_sot']}-{d['away_sot']})"
             lines.append(shots_line)
 
         blocks.append("\n".join(lines))

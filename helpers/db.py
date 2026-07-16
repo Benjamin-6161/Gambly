@@ -150,6 +150,27 @@ def get_latest_prediction(match_id: str):
     row = cursor.fetchone()
     conn.close()
     return dict(row) if row else None
+    
+def get_predictions_awaiting_results(since_days: int = 14):
+    """Every (match_id, fixture) that has a prediction but no result row
+    yet - this is what results.py should scrape, instead of relying on
+    the `matches` table, which now gets wiped every 3 days by the predict
+    run and can no longer be trusted to still contain a match by the time
+    its result is ready to fetch. Bounded to recent predictions so a
+    postponed/abandoned match doesn't get retried forever."""
+    init_db()
+    conn = _connect()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT p.match_id, p.fixture
+        FROM predictions p
+        LEFT JOIN results r ON p.match_id = r.match_id
+        WHERE r.id IS NULL
+          AND p.created_at >= datetime('now', ?)
+    """, (f"-{since_days} days",))
+    rows = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return rows
 
 
 # ---------------------------------------------------------------------------

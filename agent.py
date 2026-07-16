@@ -38,7 +38,15 @@ class SavePredictionInput(BaseModel):
     market: str = Field(description="betting market, e.g. 'Match Result', 'Total Goals', 'BTTS'")
     predicted_outcome: str = Field(description="the specific pick, e.g. 'Home win', 'Over 2.5 goals'")
     reasoning: str = Field(description="one or two sentence reasoning behind the pick")
-    whispers_opinion: Optional[str] = Field(default="", description="short summary of footballwhispers.com's opinion, if any was found")
+    whispers_opinion: Optional[str] = Field(
+        default="",
+        description=(
+            "footballwhispers.com's tip in just a few words - e.g. "
+            "'BTTS - Yes' or 'Spain to win 2-0' - not the full article "
+            "summary. This gets shown directly in the Telegram message, "
+            "so keep it short."
+        ),
+    )
 
 
 class SendTelegramMessageInput(BaseModel):

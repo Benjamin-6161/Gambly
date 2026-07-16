@@ -19,14 +19,15 @@ def send_telegram_message(message: str, from_ai=True) -> str:
 
   url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-  final_message = f"🚨Predictions for {formatted_date}\n\n{message}"
+  final_message = f"🚨 *Predictions for {formatted_date}*\n\n{message}"
 
   if not from_ai:
-    final_message = f"⚽Results for Yesterday's Matches\n\n{message}"
+    final_message = f"⚽ *Results for Yesterday's Matches*\n\n{message}"
 
   payload = {
       "chat_id": CHAT_ID,
-      "text": final_message
+      "text": final_message,
+      "parse_mode": "Markdown",
     }
 
   try:
