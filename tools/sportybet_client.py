@@ -91,7 +91,7 @@ class SportyBetSession:
         return None
 
     @staticmethod
-    def resolve_known_market(self, event: dict, market_text: str, outcome_text: str):
+    def resolve_known_market(event: dict, market_text: str, outcome_text: str):
         """
         Resolves a selection from confirmed SportyBet market/outcome IDs.
         market_text and outcome_text are checked separately (rather than
@@ -115,21 +115,21 @@ class SportyBetSession:
 
         if "double chance" in combined or "win or draw" in combined or "or draw" in combined or "or away" in combined:
             if "home" in combined and "draw" in combined:
-                return {"eventId": event["event_id"], "marketId": "10",
+                return {"eventId": event["eventId"], "marketId": "10",
                         "specifier": None, "outcomeId": "9"}
             if "home" in combined and "away" in combined:
-                return {"eventId": event["event_id"], "marketId": "10",
+                return {"eventId": event["eventId"], "marketId": "10",
                         "specifier": None, "outcomeId": "10"}
             if "draw" in combined and "away" in combined:
-                return {"eventId": event["event_id"], "marketId": "10",
+                return {"eventId": event["eventId"], "marketId": "10",
                         "specifier": None, "outcomeId": "11"}
 
         if ("both teams to score" in combined or "btts" in combined or " gg" in combined) and "team" not in combined.split("both")[0]:
             if "yes" in combined:
-                return {"eventId": event["event_id"], "marketId": "29",
+                return {"eventId": event["eventId"], "marketId": "29",
                         "specifier": None, "outcomeId": "74"}
             if "no" in combined:
-                return {"eventId": event["event_id"], "marketId": "29",
+                return {"eventId": event["eventId"], "marketId": "29",
                         "specifier": None, "outcomeId": "76"}
 
         over_under = re.search(r"(over|under)\s*(\d+(?:\.\d+)?)", outcome)
@@ -146,7 +146,7 @@ class SportyBetSession:
             else:
                 return None  # ambiguous, don't guess
 
-            return {"eventId": event["event_id"], "marketId": market_id,
+            return {"eventId": event["eventId"], "marketId": market_id,
                     "specifier": f"total={line}", "outcomeId": outcome_id}
 
         return None

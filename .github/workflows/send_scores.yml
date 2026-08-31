@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   run-script:
-    if: false   # flip to true (or remove) once you've smoke-tested locally
+    if: true# flip switch for workflow 'true'- run workflow, 'false'- disable workflow
     runs-on: ubuntu-latest
 
     steps:

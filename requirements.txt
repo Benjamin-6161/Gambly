@@ -4,5 +4,5 @@ beautifulsoup4
 playwright
 langgraph
 langchain-core
-langchain-openai
+langchain-google-genai
 pydantic

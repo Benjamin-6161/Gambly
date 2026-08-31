@@ -150,7 +150,7 @@ Environment variables (set as GitHub Actions secrets, or in a local `.env`):
 
 | Variable             | Used by                          |
 |-----------------------|-----------------------------------|
-| `OPENAI_API_KEY`      | `agent.py` (via `langchain-openai`)|
+| `GOOGLE_API_KEY`      | `agent.py` (via `langchain-gemini`)|
 | `TELEGRAM_BOT_TOKEN`  | `tools/send_telegram_message.py`  |
 | `TELEGRAM_CHAT_ID`    | `tools/send_telegram_message.py`  |
 

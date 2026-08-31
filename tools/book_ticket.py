@@ -26,7 +26,7 @@ def book_parlay(predictions):
         elif "away win" in outcome:
             selection = sb.resolve_home_draw_away(event, "away")
 
-        if not selection:
+        #if not selection:
             # Combine market + predicted_outcome so a bare "No"/"Yes" or
             # "Over 2.5" still carries its market context (confirmed
             # failing without this: predicted_outcome alone was sometimes

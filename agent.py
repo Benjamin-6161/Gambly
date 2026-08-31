@@ -4,7 +4,7 @@ load_dotenv()
 
 from langgraph.prebuilt import create_react_agent
 from langchain_core.tools import BaseTool, Tool
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
 
 from tools.fetch_match_overview import fetch_match_overview
@@ -24,11 +24,9 @@ from helpers.generate_ticket import generate_ticket_message
 class FetchMatchDetailsInput(BaseModel):
     url: str = Field(description="should be a url for a match")
 
-
 class WhispersInput(BaseModel):
     home_team: str = Field(description="home team name")
     away_team: str = Field(description="away team name")
-
 
 class SavePredictionInput(BaseModel):
     match_id: str = Field(description="the match_id for this fixture")
@@ -48,10 +46,8 @@ class SavePredictionInput(BaseModel):
         ),
     )
 
-
 class SendTelegramMessageInput(BaseModel):
     message: str = Field(description="should be a string of the telegram message to send")
-
 
 class MatchPick(BaseModel):
     fixture: str = Field(description="e.g. 'Team A vs Team B'")
@@ -61,7 +57,6 @@ class MatchPick(BaseModel):
     predicted_outcome: str
     reasoning: Optional[str] = ""
     whispers_opinion: Optional[str] = ""
-
 
 class BuildTicketInput(BaseModel):
     predictions: List[MatchPick] = Field(description="Every pick made this run, one entry per match")
@@ -79,7 +74,6 @@ class FetchMatchDetailsTool(BaseTool):
     def _run(self, url: str) -> str:
         return fetch_match_overview(url)
 
-
 class FetchWhispersTool(BaseTool):
     name: str = "fetch_whispers_prediction"
     description: str = (
@@ -91,8 +85,7 @@ class FetchWhispersTool(BaseTool):
 
     def _run(self, home_team: str, away_team: str):
         return find_whispers_article(home_team, away_team)
-
-
+  
 class SavePredictionTool(BaseTool):
     name: str = "save_prediction"
     description: str = (
@@ -106,7 +99,6 @@ class SavePredictionTool(BaseTool):
         save_prediction(kwargs)
         return "Saved"
 
-
 class SendTelegramMessageTool(BaseTool):
     name: str = "send_telegram_message"
     description: str = "Useful for when you need to send a telegram message."
@@ -114,7 +106,6 @@ class SendTelegramMessageTool(BaseTool):
 
     def _run(self, message: str) -> str:
         return send_telegram_message(message)
-
 
 class BuildTicketTool(BaseTool):
     name: str = "build_ticket"
@@ -135,14 +126,11 @@ class BuildTicketTool(BaseTool):
         booking_result = book_parlay(pred_dicts)
         return generate_ticket_message(pred_dicts, booking_result=booking_result)
 
-
 def get_all_matches(*args, **kwargs):
     return fetch_matches()
 
-
 def get_history(*args, **kwargs):
     return get_history_context(limit=30)
-
 
 tools = [
     FetchMatchDetailsTool(),
@@ -167,7 +155,7 @@ tools = [
     ),
 ]
 
-llm = ChatOpenAI(model="gpt-4o")
+llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite")
 agent = create_react_agent(llm, tools)
 
 
