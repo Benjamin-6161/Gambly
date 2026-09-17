@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   run-script:
-    if: true# flip switch for workflow 'true'- run workflow, 'false'- disable workflow
+    if: true #flip switch for workflow 'true'- run workflow, 'false'- disable workflow
     runs-on: ubuntu-latest
 
     steps:
