@@ -1,10 +1,12 @@
+import os
 from typing import Type, Optional, List
 from dotenv import load_dotenv
 load_dotenv()
 
 from langgraph.prebuilt import create_react_agent
-from langchain_core.tools import BaseTool, Tool
+from langchain_core.tools import BaseTool, Tool, StructuredTool
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from pydantic import BaseModel, Field
 
 from tools.fetch_match_overview import fetch_match_overview
@@ -20,6 +22,9 @@ from helpers.generate_ticket import generate_ticket_message
 # ---------------------------------------------------------------------------
 # Tool argument schemas
 # ---------------------------------------------------------------------------
+
+class NoArgs(BaseModel):
+    pass
 
 class FetchMatchDetailsInput(BaseModel):
     url: str = Field(description="should be a url for a match")
@@ -138,25 +143,28 @@ tools = [
     SavePredictionTool(),
     BuildTicketTool(),
     SendTelegramMessageTool(),
-    Tool(
+     StructuredTool.from_function(
+        func=lambda: fetch_matches(),
         name="GetAllMatches",
-        func=get_all_matches,
         description="Get all available matches for the day",
+        args_schema=NoArgs,
     ),
-    Tool(
+   StructuredTool.from_function(
+        func=lambda: get_history_context(limit=30),
         name="GetHistoryContext",
-        func=get_history,
-        description=(
-            "Get a summary of past predictions vs actual results, including "
-            "accuracy by market type. Call this once near the start of the run "
-            "and factor it into today's picks - e.g. lean away from a market "
-            "type you've historically graded poorly on."
-        ),
+        description="Get a summary of past predictions vs actual results...",
+        args_schema=NoArgs,
     ),
 ]
 
-llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite")
-agent = create_react_agent(llm, tools)
+if os.getenv("ENVIRONMENT") == "production":
+    #gemini
+    llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite")
+    agent = create_react_agent(llm, tools)
+else:
+    #ollama (for dev)
+    llm = ChatOllama(model="qwen2.5-coder-7b-local", temperature=0, num_ctx=16384)
+    agent = create_react_agent(llm, tools)
 
 
 SYSTEM_PROMPT = """You are an expert soccer punter helping produce a daily parlay ticket.
@@ -186,6 +194,7 @@ Rules:
 7. Send that returned text via send_telegram_message exactly as given,
    without editing it. If there were no matches available at all, skip
    build_ticket and just send 'No High priority matches available today😓.'
+8. Make sure to return a prediction for every match in fetch_matches no matter the number.
 """
 
 response = agent.invoke({
