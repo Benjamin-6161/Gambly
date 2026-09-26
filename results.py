@@ -5,6 +5,8 @@ from helpers.generate_message import generate_results_message
 
 matches = get_predictions_awaiting_results()
 results = []
+pending = 0
+errors = 0
 
 for match in matches:
     match_id = match.get('match_id')
@@ -14,10 +16,12 @@ for match in matches:
         details = get_match_details(match_id)
     except Exception as e:
         print(f"[results] Failed to fetch details for {fixture} ({match_id}): {e}")
-        details = {}
+        errors += 1
+        continue
 
     if not details.get("ft_score"):
         print(f"[results] {fixture} not finished yet, skipping for now")
+        pending += 1
         continue
 
     save_result(match_id, fixture, details)
@@ -27,6 +31,7 @@ for match in matches:
         "details": details,
     })
 
-print(results)
-message = generate_results_message(results)
+print(f"[results] finished={len(results)} pending={pending} errors={errors} "
+      f"out of {len(matches)} awaiting predictions")
+message = generate_results_message(results, pending=pending)
 send_telegram_message(message, False)

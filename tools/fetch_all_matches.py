@@ -34,7 +34,9 @@ DATED_TIME_RE = re.compile(r"^(\d{1,2})\.(\d{1,2})\.\s*(\d{1,2}:\d{2})?")
 # How far ahead (and slightly behind, to absorb timezone slop between the
 # scraping browser and the real world) a match can be and still be picked
 # up. Change these two numbers if you want a wider/narrower lookahead.
-DAY_WINDOW_BACK = 1
+# Pipeline covers today + next 3 days (0 to +3). No backfill: yesterday's
+# matches belong to the results job, not the prediction job.
+DAY_WINDOW_BACK = 0
 DAY_WINDOW_FORWARD = 3
 
 FINISHED_MARKERS = {"FT", "AET", "AP", "PEN.", "POSTP.", "CANCL.", "ABN.", "AWRD."}

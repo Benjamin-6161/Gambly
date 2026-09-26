@@ -7,14 +7,24 @@ def generate_message(items):
     return "\n\n".join(message_lines)
 
 
-def generate_results_message(items):
+def generate_results_message(items, pending=0):
     """Detailed results formatter: FT/HT score, corners, cards, shots and
     shots on target for both teams, per match.
 
     items: list of {"match": str, "details": dict} where details comes from
     helpers.fetch_match_results.get_match_details
+    pending: number of predicted matches not finished yet (reported in the
+    header so an empty finished-list is still informative instead of
+    looking like a silent failure).
     """
+    header = ""
+    if pending:
+        header = (f"_{pending} other predicted match{'es' if pending != 1 else ''} "
+                  f"not finished yet._\n\n")
+
     if not items:
+        if pending:
+            return header + "No finished results to report yet - check back tomorrow."
         return "No results to report today."
 
     blocks = []
@@ -44,4 +54,4 @@ def generate_results_message(items):
 
         blocks.append("\n".join(lines))
 
-    return "\n\n".join(blocks)
+    return header + "\n\n".join(blocks)

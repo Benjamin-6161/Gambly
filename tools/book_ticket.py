@@ -12,19 +12,35 @@ def book_parlay(predictions):
         outcome_text = pred["predicted_outcome"].strip()
         outcome = outcome_text.lower()
 
-        event = sb.find_event(home, away)
+        # Full market catalogue (factsCenter/event) so legs beyond 1X2 /
+        # totals / BTTS / double-chance can also resolve - falls back to
+        # the slimmer firstSearch payload if the details call fails.
+        event = sb.find_event_with_markets(home, away)
         if not event:
             unbooked.append(pred)
             continue
         print(f"[SportyBet] find_event OK for {home} vs {away} -> {event['eventId']}")
 
         selection = None
-        if outcome == "draw":
-            selection = sb.resolve_home_draw_away(event, "draw")
-        elif "home win" in outcome:
-            selection = sb.resolve_home_draw_away(event, "home")
-        elif "away win" in outcome:
-            selection = sb.resolve_home_draw_away(event, "away")
+        market_lower = market_text.lower()
+        is_half_leg = "half" in f"{market_lower} {outcome}"
+        is_plain_1x2 = (not is_half_leg
+                        and "corner" not in market_lower
+                        and "booking" not in market_lower
+                        and "card" not in market_lower
+                        and ("match result" in market_lower
+                             or market_lower.strip() in ("1x2", "result", "ft result",
+                                                         "full-time result", "full time result")))
+        # Full-time 1X2 shortcut only - everything else (double chance,
+        # DNB, handicaps, half legs) must go through resolve_known_market
+        # or it lands on the wrong market ID.
+        if is_plain_1x2:
+            if outcome == "draw":
+                selection = sb.resolve_home_draw_away(event, "draw")
+            elif "home win" in outcome:
+                selection = sb.resolve_home_draw_away(event, "home")
+            elif "away win" in outcome:
+                selection = sb.resolve_home_draw_away(event, "away")
 
         #if not selection:
             # Combine market + predicted_outcome so a bare "No"/"Yes" or

@@ -213,6 +213,65 @@ def grade_prediction(predicted_outcome: str, ft_score: str):
         if "no" in pred:
             return int(not both_scored)
 
+    if "draw no bet" in pred or re.search(r"\bdnb\b", pred):
+        if home == away:
+            return None  # stake refunded - neither correct nor incorrect
+        if pred.startswith("home"):
+            return int(home > away)
+        if pred.startswith("away"):
+            return int(home < away)
+
+    if re.search(r"\bodd\b", pred) or re.search(r"\beven\b", pred):
+        if "home" in pred and "team" in pred:
+            n = home
+        elif "away" in pred and "team" in pred:
+            n = away
+        else:
+            n = total
+        # the pick is whichever word comes last ('Odd' / 'Even'); a bare
+        # 'Odd' or 'Even' outcome counts as that pick
+        has_odd = bool(re.search(r"\bodd\b", pred))
+        has_even = bool(re.search(r"\beven\b", pred))
+        pick_odd = has_odd and (not has_even or pred.rfind("odd") > pred.rfind("even"))
+        return int((n % 2 == 1) == pick_odd)
+
+    if "clean sheet" in pred:
+        if "home" in pred:
+            cs = away == 0
+        elif "away" in pred:
+            cs = home == 0
+        else:
+            return None
+        if "yes" in pred:
+            return int(cs)
+        if "no" in pred:
+            return int(not cs)
+
+    if "win to nil" in pred:
+        if "home" in pred:
+            hit = home > away and away == 0
+        elif "away" in pred:
+            hit = away > home and home == 0
+        else:
+            return None
+        if "yes" in pred:
+            return int(hit)
+        if "no" in pred:
+            return int(not hit)
+
+    only_home = ("only home" in pred)
+    only_away = ("only away" in pred)
+    if only_home or only_away or "neither" in pred or "none" in pred:
+        if only_home:
+            return int(home > 0 and away == 0)
+        if only_away:
+            return int(away > 0 and home == 0)
+        return int(home == 0 and away == 0)
+
+    exact_goals = re.search(r"(?:exact(?:ly)?\s*)?(\d+)\s*goals?\s*$", pred)
+    if exact_goals and "over" not in pred and "under" not in pred:
+        return int(total == int(exact_goals.group(1)))
+
     score_match = re.search(r"(\d+)\s*-\s*(\d+)", pred)
     if score_match:
         return int(int(score_match.group(1)) == home and int(score_match.group(2)) == away)
